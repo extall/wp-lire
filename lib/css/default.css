@@ -1,0 +1,228 @@
+/* 
+    Document   : default
+    Created on : 2.12.2011, 10:12:56
+    Author     : Aleksei Tepljakov
+    Description:
+        The following stylesheet describes the default formatting styles for the
+        LiRE extensions with default configuration. Please note that if configuration
+        is changed, namely the sections with style classname definitions, this style
+        may not work correctly.
+*/
+
+/*** Floating structures styles ***/
+.LatexFloat
+{
+    margin-top: 1.5em;
+    margin-bottom: 1.5em;
+    width: 100%;
+}
+
+/* Centering rules */
+.LatexFloatCentering table
+{
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.LatexFloatCentering .LatexFloatTableCaption
+{
+    text-align: center;
+}
+
+.LatexFloatCentering img
+{
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* Captions */
+.LatexFloat .LatexFloatFigureCaption
+{
+    margin-top: 0.5em;
+}
+
+/* Equation */
+.LatexFloatEquation .LatexFloatEquationNumber
+{
+    float: right;
+}
+
+/* Table */
+.LatexFloatTable .LatexFloatTableCaption
+{
+    margin-bottom: 0.5em;
+}
+
+.LatexFloatTable table
+{
+    border: none;
+    border-collapse: collapse;
+}
+
+.LatexFloatTable table td
+{
+    border-bottom: 1px solid;
+    padding: 0.3em 0.5em 0.3em 0.5em;
+}
+
+.LatexFloatTable table tr:first-child td
+{
+    border-bottom: 2px solid;
+    border-top: 2px solid;
+    font-weight: bold;
+}
+
+.LatexFloatTable table tr:last-child td
+{
+    border-bottom: 2px solid;
+}
+
+/*** Table of contents styles ***/
+.LatexTableOfContents
+{
+    border: 1px solid #aaaaaa;
+    margin: 10px 0 10px 0;
+    padding: 10px 10px 0px 10px;
+    text-align: left;
+    font-family: "Gill Sans", "Gill Sans MT", Calibri, sans-serif;
+    font-size: 1em;
+    display: table;
+}
+
+.LatexTableOfContents a
+{
+	text-decoration: none;
+	background: 0 none;
+	text-shadow: 0 none;
+}
+
+.LatexTableOfContentsTitle
+{
+    width: 100%;
+    text-align: left;
+    font-weight: bold;
+    margin-bottom: 1.25em;
+}
+
+.LatexTableOfContents ul
+{
+    list-style-type: none;
+    margin-left: 0px;
+    margin-bottom: 10px;
+    padding-left: 0px;
+    font-size: 0.9em;
+}
+
+.LatexTableOfContents li
+{
+    margin-top: 0.5em;
+}
+
+.LatexTableOfContentsLevel1
+{
+    margin-left: 0;
+}
+
+.LatexTableOfContentsLevel2
+{
+    margin-left: 2em;
+}
+
+.LatexTableOfContentsLevel3
+{
+    margin-left: 4em;
+}
+
+/*** Reference styles ***/
+a.LatexReference:link,
+a.LatexReference:visited,
+a.LatexReference:active,
+a.LatexReference:hover
+{
+    text-decoration: none;
+}
+
+/*** Footnote styles ***/
+sup.LatexFootnote
+{
+    font-size: 0.6em;
+    font-weight: bold;
+    font-family: Tahoma, sans-serif;
+}
+
+sup.LatexFootnote a:link,
+sup.LatexFootnote a:visited,
+sup.LatexFootnote a:active,
+sup.LatexFootnote a:hover
+{
+    text-decoration: none;
+}
+
+div.LatexFootnote ul
+{
+    list-style-type: none;
+    margin-left: 0px;
+    padding-left: 0px;
+    font-size: 0.9em;
+}
+
+div.LatexFootnote li
+{
+    margin-top: 0.5em;
+    text-align: left;
+}
+
+hr.LatexFootnote
+{
+    margin-top: 1.5em;
+    height: 1px;
+    width: 40%;
+}
+
+span.LatexSidenote
+{
+	font-family: "Gill Sans", "Gill Sans MT", Calibri, sans-serif;
+	color: #666;
+	float: right;
+    clear: right;
+    margin-right: -60%;
+    width: 50%;
+    margin-top: 0.2rem;
+    margin-bottom: 0.2rem;
+    font-size: 1.1rem;
+    line-height: 1.3;
+    vertical-align: baseline;
+    position: relative;
+}
+
+div.LatexFloat{
+	font-family: "Gill Sans", "Gill Sans MT", Calibri, sans-serif;
+}
+
+/*** Bibtex citation and bibliography styles ***/
+table.BibtexCiteBibliography
+{
+    font-size: 0.9em;
+    border: 0px !important;
+}
+
+table.BibtexCiteBibliography td,
+table.BibtexCiteBibliography tr
+{
+    border: 0px;
+}
+
+table.BibtexCiteBibliography td,
+table.BibtexCiteBibliography th
+{
+    vertical-align: top !important;
+    padding: 0.3em 0.3em;
+}
+
+/* NB! Bad fix alert! Please find a better way to achieve this effect.
+   Some fixes for <p>-s and <br>'s appearing inside footnotes and figures */
+span.LatexSidenote br,
+div.LatexFloat p{
+	display: none;
+}

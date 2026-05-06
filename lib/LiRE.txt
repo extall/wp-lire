@@ -1,0 +1,6 @@
+\def\LiRE{{\sf %
+L%
+\kern-.2em\lower-.2ex\hbox{\i}%
+\kern-.256em \lower-1.3ex\hbox{\rm{.}}%
+\kern-.1emR%
+\kern-.08emE}}
