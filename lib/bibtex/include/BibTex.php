@@ -25,7 +25,6 @@
    * @link       http://pear.php.net/package/Structures_BibTex
    */
 
-require_once 'PEAR.php' ;
 /**
  * Structures_BibTex
  *
@@ -34,9 +33,8 @@ require_once 'PEAR.php' ;
  * Example 1: Parsing a BibTex File and returning the number of entries
  * <code>
  * $bibtex = new Structures_BibTex();
- * $ret    = $bibtex->loadFile('foo.bib');
- * if (PEAR::isError($ret)) {
- *   die($ret->getMessage());
+ * if (!$bibtex->loadFile('foo.bib')) {
+ *   die('Could not load BibTeX file');
  * }
  * $bibtex->parse();
  * print "There are ".$bibtex->amount()." entries";
@@ -44,9 +42,8 @@ require_once 'PEAR.php' ;
  * Example 2: Parsing a BibTex File and getting all Titles
  * <code>
  * $bibtex = new Structures_BibTex();
- * $ret    = $bibtex->loadFile('bibtex.bib');
- * if (PEAR::isError($ret)) {
- *   die($ret->getMessage());
+ * if (!$bibtex->loadFile('bibtex.bib')) {
+ *   die('Could not load BibTeX file');
  * }
  * $bibtex->parse();
  * foreach ($bibtex->data as $entry) {
@@ -167,10 +164,7 @@ class Structures_BibTex
             'fetchIEEEJournals' => true
         );
         foreach ($options as $option => $value) {
-            $test = $this->setOption($option, $value);
-            if (PEAR::isError($test)) {
-                //Currently nothing is done here, but it could for example raise an warning
-            }
+            $this->setOption($option, $value);
         }
         $this->rtfstring         = 'AUTHORS, "{\b TITLE}", {\i JOURNAL}, YEAR';
         $this->htmlstring        = 'AUTHORS, "<strong>TITLE</strong>", <em>JOURNAL</em>, YEAR<br />';
@@ -198,49 +192,43 @@ class Structures_BibTex
     /**
      * Sets run-time configuration options
      *
-     * @access public
      * @param string $option option name
      * @param mixed  $value value for the option
-     * @return mixed true on success PEAR_Error on failure
+     * @return bool true on success, false on unknown option
      */
-    function setOption($option, $value)
+    public function setOption($option, $value)
     {
-        $ret = true;
         if (array_key_exists($option, $this->_options)) {
             $this->_options[$option] = $value;
-        } else {
-            $ret = PEAR::raiseError('Unknown option '.$option);
+            return true;
         }
-        return $ret;
+        return false;
     }
 
     /**
      * Reads a give BibTex File
      *
-     * @access public
      * @param string $filename Name of the file
-     * @return mixed true on success PEAR_Error on failure
+     * @return bool true on success, false on failure
      */
-    function loadFile($filename)
+    public function loadFile($filename)
     {
-        if (($this->content = @file_get_contents($filename)) !== false)
-        {
-            $this->_pos = 0;
-            $this->_oldpos = 0;
-            return true;
-        } else
-        {
-            return @PEAR::raiseError('Could not find file ' . $filename);
+        $contents = @file_get_contents($filename);
+        if ($contents === false) {
+            return false;
         }
+        $this->content = $contents;
+        $this->_pos = 0;
+        $this->_oldpos = 0;
+        return true;
     }
 
     /**
      * Parses what is stored in content and clears the content if the parsing is successfull.
      *
-     * @access public
-     * @return boolean true on success and PEAR_Error if there was a problem
+     * @return bool true on success, false on failure
      */
-    function parse()
+    public function parse()
     {
         //The amount of opening braces is compared to the amount of closing braces
         //Braces inside comments are ignored
@@ -362,9 +350,8 @@ class Structures_BibTex
         if ($valid) {
             $this->content = '';
             return true;
-        } else {
-            return PEAR::raiseError('Unbalanced parenthesis');
         }
+        return false;
     }
 
     /**
@@ -687,16 +674,12 @@ class Structures_BibTex
                             $last .= ' '.$tmparray[$j];
                         } elseif ($invon) {
                             $case = $this->_determineCase($tmparray[$j]);
-                            if (@PEAR::isError($case)) {
-                                // IGNORE?
-                            } elseif ((0 == $case) || (-1 == $case)) { //Change from von to last
+                            if ((0 == $case) || (-1 == $case)) { //Change from von to last
                                 //You only change when there is no more lower case there
                                 $islast = true;
                                 for ($k=($j+1); $k<($size-1); $k++) {
                                     $futurecase = $this->_determineCase($tmparray[$k]);
-                                    if (@PEAR::isError($case)) {
-                                        // IGNORE?
-                                    } elseif (0 == $futurecase) {
+                                    if (0 == $futurecase) {
                                         $islast = false;
                                     }
                                 }
@@ -715,9 +698,7 @@ class Structures_BibTex
                             }
                         } else {
                             $case = $this->_determineCase($tmparray[$j]);
-                            if (@PEAR::isError($case)) {
-                                // IGNORE?
-                            } elseif (0 == $case) { //Change from first to von
+                            if (0 == $case) { //Change from first to von
                                 $invon = true;
                                 $von   .= ' '.$tmparray[$j];
                             } else {
@@ -746,11 +727,8 @@ class Structures_BibTex
                             if (0 != ($this->_determineCase($vonlastarray[$j]))) { //Change from von to last
                                 $islast = true;
                                 for ($k=($j+1); $k<($size-1); $k++) {
-                                    $this->_determineCase($vonlastarray[$k]);
                                     $case = $this->_determineCase($vonlastarray[$k]);
-                                    if (@PEAR::isError($case)) {
-                                        // IGNORE?
-                                    } elseif (0 == $case) {
+                                    if (0 == $case) {
                                         $islast = false;
                                     }
                                 }
@@ -788,40 +766,36 @@ class Structures_BibTex
      * - Lower Case (return value 0)
      * - Caseless   (return value -1)
      *
-     * @access private
      * @param string $word
-     * @return int The Case or PEAR_Error if there was a problem
+     * @return int 1 = upper, 0 = lower, -1 = caseless / unable to determine
      */
-    function _determineCase($word) {
+    private function _determineCase($word) {
         $ret         = -1;
-        $trimmedword = trim ($word);
-        /*We need this variable. Without the next of would not work
-         (trim changes the variable automatically to a string!)*/
-        if (is_string($word) && (strlen($trimmedword) > 0)) {
-            $i         = 0;
-            $found     = false;
-            $openbrace = 0;
-            while (!$found && ($i <= strlen($word))) {
-                $letter = substr($trimmedword, $i, 1);
-                $ord    = ord($letter);
-                if ($ord == 123) { //Open brace
-                    $openbrace++;
-                }
-                if ($ord == 125) { //Closing brace
-                    $openbrace--;
-                }
-                if (($ord>=65) && ($ord<=90) && (0==$openbrace)) { //The first character is uppercase
-                    $ret   = 1;
-                    $found = true;
-                } elseif ( ($ord>=97) && ($ord<=122) && (0==$openbrace) ) { //The first character is lowercase
-                    $ret   = 0;
-                    $found = true;
-                } else { //Not yet found
-                    $i++;
-                }
+        $trimmedword = trim($word);
+        if (!is_string($word) || strlen($trimmedword) === 0) {
+            return $ret;
+        }
+        $i         = 0;
+        $found     = false;
+        $openbrace = 0;
+        while (!$found && ($i <= strlen($word))) {
+            $letter = substr($trimmedword, $i, 1);
+            $ord    = ord($letter);
+            if ($ord == 123) { //Open brace
+                $openbrace++;
             }
-        } else {
-            $ret = PEAR::raiseError('Could not determine case on word: '.(string)$word);
+            if ($ord == 125) { //Closing brace
+                $openbrace--;
+            }
+            if (($ord>=65) && ($ord<=90) && (0==$openbrace)) { //The first character is uppercase
+                $ret   = 1;
+                $found = true;
+            } elseif ( ($ord>=97) && ($ord<=122) && (0==$openbrace) ) { //The first character is lowercase
+                $ret   = 0;
+                $found = true;
+            } else { //Not yet found
+                $i++;
+            }
         }
         return $ret;
     }
